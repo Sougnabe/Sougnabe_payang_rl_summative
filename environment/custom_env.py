@@ -33,15 +33,15 @@ class DisasterResponseEnv(gym.Env[np.ndarray, int]):
         self.no_victim_relief_radius = 1.4 * self.scan_radius
         self.battery_capacity = 100.0
         self.recharge_radius = 7.0
-        self.charge_time_seconds = 10.0
-        self.drain_time_seconds = 30.0
+        self.charge_time_seconds = 5.0
+        self.drain_time_seconds = 10.0
         self.stale_steps_for_boost = 5
         self.stale_speed_boost = 1.75
         self.no_victim_revisit_penalty = 0.35
         self.step_cost = 0.05
 
         fps = float(self.metadata.get("render_fps", 30))
-        # Make the battery drain over about 30 seconds and recharge over about 10 seconds.
+        # Make the battery drain over about 10 seconds and recharge over about 5 seconds.
         self.base_drain_rate = self.battery_capacity / (self.drain_time_seconds * fps)
         self.movement_drain_rate = 0.12 * self.base_drain_rate
         self.scan_drain_extra = 0.06 * self.base_drain_rate

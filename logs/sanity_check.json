@@ -1,8 +1,8 @@
 [
   {
     "name": "random",
-    "mean_reward": -154.33734517669674,
-    "std_reward": 20.641106516679816,
+    "mean_reward": -170.20899880313874,
+    "std_reward": 20.85437626605309,
     "mean_delivered": 0.0,
     "n_seeds": 20
   },
@@ -15,8 +15,8 @@
   },
   {
     "name": "scan_spam (exploit)",
-    "mean_reward": -160.12304287910462,
-    "std_reward": 5.227341525250322,
+    "mean_reward": -164.25450615024565,
+    "std_reward": 10.880913277077564,
     "mean_delivered": 0.0,
     "n_seeds": 20
   },
