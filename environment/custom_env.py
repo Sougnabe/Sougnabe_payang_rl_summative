@@ -26,22 +26,23 @@ class DisasterResponseEnv(gym.Env[np.ndarray, int]):
 
         self.world_size = 100.0
         self.max_steps = 420
-        self.move_speed = 2.6
+        self.move_speed = 1.8
         self.wind_scale = 0.55
         self.scan_radius = 9.5
         self.delivery_radius = 5.5
         self.no_victim_relief_radius = 1.4 * self.scan_radius
         self.battery_capacity = 100.0
         self.recharge_radius = 7.0
-        self.charge_time_seconds = 5.0
-        self.drain_time_seconds = 10.0
+        self.charge_time_seconds = 7.5
+        self.drain_time_seconds = 15.0
         self.stale_steps_for_boost = 5
         self.stale_speed_boost = 1.75
         self.no_victim_revisit_penalty = 0.35
         self.step_cost = 0.05
+        self.battery_safety_margin = 1.15
 
         fps = float(self.metadata.get("render_fps", 30))
-        # Make the battery drain over about 10 seconds and recharge over about 5 seconds.
+        # Make the battery drain over about 15 seconds and recharge over about 7.5 seconds.
         self.base_drain_rate = self.battery_capacity / (self.drain_time_seconds * fps)
         self.movement_drain_rate = 0.12 * self.base_drain_rate
         self.scan_drain_extra = 0.06 * self.base_drain_rate
@@ -75,6 +76,7 @@ class DisasterResponseEnv(gym.Env[np.ndarray, int]):
         self._recent_cells: list[tuple[int, int]] = []
         self._steps_since_new_cell = 0
         self.last_recharged = 0.0
+        self._auto_returning = False
         self.victim_sites = self._build_victim_sites()
 
         self.reset(seed=seed)
@@ -185,6 +187,7 @@ class DisasterResponseEnv(gym.Env[np.ndarray, int]):
         self._recent_cells = [self._cell_index(self.agent_pos)]
         self._steps_since_new_cell = 0
         self.last_recharged = 0.0
+        self._auto_returning = False
         self.victim_sites = self._build_victim_sites()
 
         return self._get_obs(), self._info()
@@ -198,6 +201,7 @@ class DisasterResponseEnv(gym.Env[np.ndarray, int]):
             "kits_left": self.kits_left,
             "delivered": delivered,
             "step": self.step_count,
+            "auto_return": self._auto_returning,
         }
 
     def step(self, action: int) -> tuple[np.ndarray, float, bool, bool, dict[str, Any]]:
@@ -206,6 +210,21 @@ class DisasterResponseEnv(gym.Env[np.ndarray, int]):
         self.last_recharged = 0.0
 
         action = int(action)
+
+        # Auto return-to-base safety override: once the remaining battery is just
+        # enough (with a small margin) to reach base at the current distance, force
+        # a return regardless of what the agent chose. Mirrors a real drone's
+        # auto-RTL failsafe and removes "died from battery neglect" as an outcome.
+        dist_to_base_now = float(np.linalg.norm(self.base_pos - self.agent_pos))
+        self._auto_returning = False
+        if dist_to_base_now > self.recharge_radius:
+            steps_to_base = dist_to_base_now / self.move_speed
+            per_step_return_cost = self.base_drain_rate + self.movement_drain_rate + self.return_drain_extra
+            battery_needed = steps_to_base * per_step_return_cost * self.battery_safety_margin
+            if self.battery <= battery_needed:
+                action = 11
+                self._auto_returning = True
+
         prev_target_dist = self._target_distance()
         prev_undiscovered_dist = self._distance_to_undiscovered_pending()
         prev_base_dist = float(np.linalg.norm(self.base_pos - self.agent_pos))

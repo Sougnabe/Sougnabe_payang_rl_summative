@@ -1,29 +1,29 @@
 [
   {
     "name": "random",
-    "mean_reward": -170.20899880313874,
-    "std_reward": 20.85437626605309,
+    "mean_reward": -166.3761087118983,
+    "std_reward": 13.34670232880563,
     "mean_delivered": 0.0,
     "n_seeds": 20
   },
   {
     "name": "parked_at_base (exploit)",
-    "mean_reward": -161.2545898208618,
-    "std_reward": 0.5849273956719947,
+    "mean_reward": -161.14732758331294,
+    "std_reward": 0.5874967195254424,
     "mean_delivered": 0.0,
     "n_seeds": 20
   },
   {
     "name": "scan_spam (exploit)",
-    "mean_reward": -164.25450615024565,
-    "std_reward": 10.880913277077564,
+    "mean_reward": -160.12762485027315,
+    "std_reward": 5.219643931567805,
     "mean_delivered": 0.0,
     "n_seeds": 20
   },
   {
     "name": "hand_written_heuristic",
-    "mean_reward": 524.1629940278528,
-    "std_reward": 6.2298923295083375,
+    "mean_reward": 544.7713451857568,
+    "std_reward": 5.193619894963916,
     "mean_delivered": 3.0,
     "n_seeds": 20
   }
