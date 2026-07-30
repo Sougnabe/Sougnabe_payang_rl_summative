@@ -6,6 +6,9 @@ __pycache__/
 *.log
 .claude/
 
+# Personal recording notes, not part of the graded deliverable.
+VIDEO_SCRIPT.md
+
 # Tensorboard event logs are large and reproducible from a fresh training run;
 # report figures, snapshots, and the demo video are committed since the report
 # and README reference them directly.
