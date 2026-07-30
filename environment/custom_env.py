@@ -39,7 +39,7 @@ class DisasterResponseEnv(gym.Env[np.ndarray, int]):
         self.stale_speed_boost = 1.75
         self.no_victim_revisit_penalty = 0.35
         self.step_cost = 0.05
-        self.battery_safety_margin = 1.15
+        self.battery_safety_margin = 2.2
 
         fps = float(self.metadata.get("render_fps", 30))
         # Make the battery drain over about 15 seconds and recharge over about 7.5 seconds.
@@ -287,14 +287,17 @@ class DisasterResponseEnv(gym.Env[np.ndarray, int]):
         hazard = self._closest_hazard_penalty()
         reward += hazard
 
-        # Encourage going back to base when battery is low.
+        # Encourage going back to base when battery is low. A moderate nudge (not too
+        # weak: agent stranded far from base at zero hour; not too strong: agent
+        # becomes too conservative to ever leave base and deliver anything) - the
+        # 2.2x auto-RTL safety margin below is the real backstop for survival.
         new_base_dist = float(np.linalg.norm(self.base_pos - self.agent_pos))
         battery_frac = float(np.clip(self.battery / self.battery_capacity, 0.0, 1.0))
-        if battery_frac < 0.35:
+        if battery_frac < 0.4:
             toward_base = np.clip((prev_base_dist - new_base_dist) / self.world_size, -0.25, 0.25)
-            reward += 2.0 * toward_base
+            reward += 2.5 * toward_base
         # Mild penalty for low battery when far from base
-        if battery_frac < 0.15 and new_base_dist > self.recharge_radius:
+        if battery_frac < 0.2 and new_base_dist > self.recharge_radius:
             reward -= 1.0
 
         # Recharge at base area (mechanical only: no reward, so idling at base is not
