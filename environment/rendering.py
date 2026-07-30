@@ -465,11 +465,14 @@ class MissionRenderer:
             glyph = font_map.get(ch)
             if glyph is None:
                 glyph = font_map[" "]
+            n_rows = len(glyph)
             for row_idx, row in enumerate(glyph):
                 for col_idx, bit in enumerate(row):
                     if bit == "1":
                         px0 = cursor_x + col_idx * scale
-                        py0 = y + row_idx * scale
+                        # Row 0 in the glyph definition is the top of the character, but GL's
+                        # y axis increases upward, so the topmost row needs the largest y.
+                        py0 = y + (n_rows - 1 - row_idx) * scale
                         gl.glColor4f(color[0], color[1], color[2], 0.9)
                         gl.glBegin(gl.GL_QUADS)
                         gl.glVertex2f(px0, py0)
@@ -533,7 +536,10 @@ class MissionRenderer:
         buffer = (gl.GLubyte * (self.width * self.height * 3))(0)
         gl.glReadPixels(0, 0, self.width, self.height, gl.GL_RGB, gl.GL_UNSIGNED_BYTE, buffer)
         img = np.frombuffer(buffer, dtype=np.uint8).reshape((self.height, self.width, 3))
-        return np.ascontiguousarray(img)
+        # glReadPixels returns rows bottom-to-top (GL's y-up convention); image arrays are
+        # top-to-bottom, so the framebuffer readout needs a vertical flip. The on-screen
+        # window (render_human) needs no such flip since it never goes through this readback.
+        return np.ascontiguousarray(img[::-1])
 
     def _render_frame(self, state: RenderState) -> None:
         """Render a single 3D frame."""
