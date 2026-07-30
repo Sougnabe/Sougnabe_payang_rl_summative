@@ -1,0 +1,30 @@
+[
+  {
+    "name": "random",
+    "mean_reward": -154.33734517669674,
+    "std_reward": 20.641106516679816,
+    "mean_delivered": 0.0,
+    "n_seeds": 20
+  },
+  {
+    "name": "parked_at_base (exploit)",
+    "mean_reward": -161.2545898208618,
+    "std_reward": 0.5849273956719947,
+    "mean_delivered": 0.0,
+    "n_seeds": 20
+  },
+  {
+    "name": "scan_spam (exploit)",
+    "mean_reward": -160.12304287910462,
+    "std_reward": 5.227341525250322,
+    "mean_delivered": 0.0,
+    "n_seeds": 20
+  },
+  {
+    "name": "hand_written_heuristic",
+    "mean_reward": 524.1629940278528,
+    "std_reward": 6.2298923295083375,
+    "mean_delivered": 3.0,
+    "n_seeds": 20
+  }
+]

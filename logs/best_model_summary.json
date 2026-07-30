@@ -1,0 +1,7 @@
+{
+  "algo": "a2c",
+  "run_name": "sweep_01",
+  "mean_reward": 497.1100158691406,
+  "std_reward": 7.427267551422119,
+  "model_path": "models/pg/a2c/sweep_01/model.zip"
+}

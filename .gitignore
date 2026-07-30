@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+.env/
+*.log
+.claude/
+
+# Tensorboard event logs are large and reproducible from a fresh training run;
+# report figures, snapshots, and the demo video are committed since the report
+# and README reference them directly.
+models/**/events.out.tfevents*
+logs/**/events.out.tfevents*

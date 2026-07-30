@@ -1,0 +1,39 @@
+[project]
+name = "student_name_rl_summative"
+version = "0.1.0"
+description = "Mission-based RL comparison: DQN vs REINFORCE vs PPO vs A2C"
+readme = "README.md"
+requires-python = ">=3.10,<3.13"
+dependencies = [
+  "gymnasium>=0.29.1",
+  "numpy>=1.26.0",
+  "stable-baselines3>=2.3.2",
+  "tensorboard>=2.16.2",
+  "torch>=2.2.0",
+  "matplotlib>=3.8.0",
+  "pandas>=2.2.0",
+  "seaborn>=0.13.2",
+  "pyglet>=2.0.16",
+  "PyOpenGL>=3.1.7",
+  "imageio>=2.35.0",
+  "imageio-ffmpeg>=0.5.1",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.3.0",
+  "ruff>=0.6.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+
+[tool.hatch.build.targets.wheel]
+packages = ["environment", "training"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
