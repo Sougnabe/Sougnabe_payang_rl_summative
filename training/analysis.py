@@ -26,12 +26,20 @@ def load_results(name: str) -> pd.DataFrame | None:
 
 def save_table_png(df: pd.DataFrame, out_path: Path, title: str) -> None:
     out_path.parent.mkdir(parents=True, exist_ok=True)
-    fig, ax = plt.subplots(figsize=(12, 3 + 0.35 * len(df)))
+
+    # row_order is internal bookkeeping and algo is redundant with the title; drop both.
+    # Round floats so long decimal expansions don't overflow their cell into neighbors.
+    view = df.drop(columns=[c for c in ("row_order", "algo") if c in df.columns]).copy()
+    float_cols = view.select_dtypes(include="float").columns
+    view[float_cols] = view[float_cols].round(4)
+
+    fig, ax = plt.subplots(figsize=(13, 3 + 0.35 * len(view)))
     ax.axis("off")
-    tbl = ax.table(cellText=df.values, colLabels=df.columns, loc="center")
+    tbl = ax.table(cellText=view.values, colLabels=view.columns, loc="center")
     tbl.auto_set_font_size(False)
     tbl.set_fontsize(9)
-    tbl.scale(1, 1.15)
+    tbl.auto_set_column_width(col=list(range(len(view.columns))))
+    tbl.scale(1, 1.5)
     ax.set_title(title)
     fig.tight_layout()
     fig.savefig(out_path, dpi=220)
